@@ -46,12 +46,16 @@ export const Chat = memo(({ stopConversationRef, socketUrl }: Props) => { // NOS
         dispatch: homeDispatch
     } = useContext(HomeContext);
 
-    const [showSettings, setShowSettings] = useState<boolean>(true);
+    const [showSettings, setShowSettings] = useState<boolean>(false);
     const [socketState, setSocketState] = useState<number>(WebSocket.CLOSED);
     const [authorized, setAuthorized] = useState<boolean>(true);
     const updatedConversationRef = useRef(selectedConversation);
 
     const displaySourceDocuments = useCaseConfig.KnowledgeBaseParams.ReturnSourceDocs;
+
+    // JPC bloquea la salida del componete de botones de configuracion TODO que valide con el perfil admin
+    const [showSttingsButton, setShowConfigButton] = useState(false);
+
 
     let socketRef = useRef<WebSocket | null>(null);
 
@@ -321,21 +325,24 @@ export const Chat = memo(({ stopConversationRef, socketUrl }: Props) => { // NOS
         return (
             <div className="flex-1" data-testid="chat-view">
                 {
-                    <>
+                    <> 
                         <div className="sticky top-0 z-10 flex justify-center bg-neutral-100 py-2">
+                        {showSttingsButton && (
                             <Button
                                 iconName="settings"
                                 variant="icon"
                                 onClick={() => handleSettings(!showSettings)}
                                 data-testid="settings-button"
-                            />
+                            />)}
                             <Button
                                 iconName="refresh"
                                 variant="icon"
                                 onClick={onClearAll}
                                 data-testid="clear-convo-button"
                             />
+
                         </div>
+                        
                         {showSettings && (
                             <>
                                 <div className="mx-auto sm:max-w-[600px] p-4">
@@ -346,12 +353,17 @@ export const Chat = memo(({ stopConversationRef, socketUrl }: Props) => { // NOS
                                                 value: prompt
                                             })
                                         }
+
+/* JPC  en esta seccion esta el boton de login */
+
+
                                         handleShowPromptWindow={handleSettings}
                                         showPromptWindow={showSettings}
                                     />
                                 </div>
                             </>
                         )}
+
                         {!!selectedConversation?.messages.length && selectedConversation?.messages.length > 0 && (
                             <>
                                 <div className="chatbox">
